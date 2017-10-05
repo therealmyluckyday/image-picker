@@ -154,14 +154,14 @@ final class CaptureSession : NSObject {
     // MARK: Video Recoding
     
     weak var videoRecordingDelegate: CaptureSessionVideoRecordingDelegate?
-    fileprivate var videoFileOutput: AVCaptureMovieFileOutput?
+    fileprivate var movieFileOutput: AVCaptureMovieFileOutput?
     fileprivate var videoCaptureDelegate: VideoCaptureDelegate?
     
     var isReadyForVideoRecording: Bool {
-        return videoFileOutput != nil
+        return movieFileOutput != nil
     }
     var isRecordingVideo: Bool {
-        return videoFileOutput?.isRecording ?? false
+        return movieFileOutput?.isRecording ?? false
     }
     
     // MARK: Photo Capturing
@@ -380,20 +380,10 @@ final class CaptureSession : NSObject {
             
             log("capture session: configuring - adding movie file input")
             
-            let movieFileOutput = AVCaptureMovieFileOutput()
-            if self.session.canAddOutput(movieFileOutput) {
-                self.session.addOutput(movieFileOutput)
-                self.videoFileOutput = movieFileOutput
-                
-                DispatchQueue.main.async { [weak self] in
-                    self?.videoRecordingDelegate?.captureSessionDidBecomeReadyForVideoRecording(self!)
-                }
-            }
-            else {
-                log("capture session: could not add video output to the session")
-                setupResult = .configurationFailed
-                session.commitConfiguration()
-                return
+            self.movieFileOutput = AVCaptureMovieFileOutput()
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.videoRecordingDelegate?.captureSessionDidBecomeReadyForVideoRecording(self!)
             }
         }
         
@@ -443,7 +433,7 @@ final class CaptureSession : NSObject {
             }
         }
         
-        if presetConfiguration != .videos {
+        //if presetConfiguration != .videos {
             // Add video data output - we use this to capture last video sample that is
             // used when blurring video layer - for example when capture session is suspended, changing configuration etc.
             // NOTE: video data output can not be connected at the same time as video file output!
@@ -461,7 +451,7 @@ final class CaptureSession : NSObject {
             else {
                 log("capture session: warning - could not add video data output to the session")
             }
-        }
+        //}
         
         session.commitConfiguration()
     }
@@ -648,7 +638,7 @@ extension CaptureSession {
                         self.session.addInput(self.videoDeviceInput);
                     }
                     
-                    if let connection = self.videoFileOutput?.connection(with: AVMediaType.video) {
+                    if let connection = self.movieFileOutput?.connection(with: AVMediaType.video) {
                         if connection.isVideoStabilizationSupported {
                             connection.preferredVideoStabilizationMode = .auto
                         }
@@ -807,7 +797,7 @@ extension CaptureSession {
     
     func startVideoRecording() {
         
-        guard let movieFileOutput = self.videoFileOutput else {
+        guard let movieFileOutput = self.movieFileOutput else {
             return log("capture session: trying to record a video but no movie file output is set")
         }
         
@@ -833,8 +823,24 @@ extension CaptureSession {
                 return log("capture session: trying to record a video but there is one already being recorded")
             }
             
+            guard let session = self?.session else {
+                return
+            }
+            
+            session.beginConfiguration()
+            
+            if let videoDataOutput = self?.videoDataOutput {
+                session.removeOutput(videoDataOutput)
+            }
+            
+            if session.canAddOutput(movieFileOutput) {
+                session.addOutput(movieFileOutput)
+            }
+            
+            session.commitConfiguration()
+            
             // update the orientation on the movie file output video connection before starting recording.
-            let movieFileOutputConnection = strongSelf.videoFileOutput?.connection(with: AVMediaType.video)
+            let movieFileOutputConnection = strongSelf.movieFileOutput?.connection(with: AVMediaType.video)
             movieFileOutputConnection?.videoOrientation = videoPreviewLayerOrientation!
             
             // start recording to a temporary file.
@@ -893,7 +899,7 @@ extension CaptureSession {
     ///
     func stopVideoRecording(cancel: Bool = false) {
     
-        guard let movieFileOutput = self.videoFileOutput else {
+        guard let movieFileOutput = self.movieFileOutput else {
             return log("capture session: trying to stop a video recording but no movie file output is set")
         }
         
@@ -909,6 +915,16 @@ extension CaptureSession {
             
             recordingDelegate.isBeingCancelled = cancel
             movieFileOutput.stopRecording()
+            
+            let session = capturedSelf.session
+            
+            session.beginConfiguration()
+            
+            session.removeOutput(movieFileOutput)
+            if let videoDataOutput = capturedSelf.videoDataOutput {
+                session.addOutput(videoDataOutput)
+            }
+            session.commitConfiguration()
         }
     }
     
