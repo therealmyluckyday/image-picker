@@ -102,7 +102,7 @@ Pod::Spec.new do |s|
   #  non-essential files like tests, examples and documentation.
   #
 
-  s.resources = 'ImagePicker/*.xcassets'
+  s.resources = 'ImagePicker/*.{xcassets,xib}'
   # s.resource  = "icon.png"
   # s.resources = "Resources/*.png"
 
