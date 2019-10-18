@@ -62,7 +62,7 @@ final class ImagePickerAssetModel {
         // The preheat window is twice the height of the visible rect.
         let visibleRect = CGRect(origin: collectionView.contentOffset, size: collectionView.bounds.size)
         
-        var preheatRect: CGRect
+        var preheatRect: CGRect = .zero
         
         switch layout.scrollDirection {
         case .vertical:
@@ -84,6 +84,9 @@ final class ImagePickerAssetModel {
             guard delta > collectionView.bounds.width / 3 else {
                 return
             }
+            
+        default:
+            break
         }
         
         // Compute the assets to start caching and to stop caching.

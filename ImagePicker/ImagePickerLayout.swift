@@ -27,7 +27,7 @@ final class ImagePickerLayout {
     }
     
     /// Returns size for item considering number of rows and scroll direction, if preferredWidthOrHeight is nil, square size is returned
-    func sizeForItem(numberOfItemsInRow: Int, preferredWidthOrHeight: CGFloat?, collectionView: UICollectionView, scrollDirection: UICollectionViewScrollDirection) -> CGSize {
+    func sizeForItem(numberOfItemsInRow: Int, preferredWidthOrHeight: CGFloat?, collectionView: UICollectionView, scrollDirection: UICollectionView.ScrollDirection) -> CGSize {
         
         switch scrollDirection {
         case .horizontal:
@@ -43,6 +43,9 @@ final class ImagePickerLayout {
             itemWidth -= (CGFloat(numberOfItemsInRow) - 1) * configuration.interitemSpacing
             itemWidth /= CGFloat(numberOfItemsInRow)
             return CGSize(width: itemWidth, height: preferredWidthOrHeight ?? itemWidth)
+            
+        default:
+            return CGSize.zero
         }
     }
     
@@ -115,6 +118,7 @@ final class ImagePickerLayout {
             switch layout.scrollDirection {
             case .horizontal: return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: inset)
             case .vertical: return UIEdgeInsets(top: 0, left: 0, bottom: inset, right: 0)
+            default: return UIEdgeInsets.zero
             }
         }
         

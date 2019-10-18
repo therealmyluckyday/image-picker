@@ -605,8 +605,8 @@ extension CaptureSession {
             let currentVideoDevice = self.videoDeviceInput.device
             let currentPosition = currentVideoDevice.position
             
-            let preferredPosition: AVCaptureDevice.Position
-            let preferredDeviceType: AVCaptureDevice.DeviceType
+            var preferredPosition: AVCaptureDevice.Position = .unspecified
+            var preferredDeviceType: AVCaptureDevice.DeviceType = .builtInDuoCamera
             
             switch currentPosition {
             case .unspecified, .front:
@@ -616,6 +616,9 @@ extension CaptureSession {
             case .back:
                 preferredPosition = .front
                 preferredDeviceType = AVCaptureDevice.DeviceType.builtInWideAngleCamera
+                
+            default:
+                break
             }
             
             let devices = self.videoDeviceDiscoverySession.devices
@@ -923,6 +926,7 @@ extension UIInterfaceOrientation {
         case .portraitUpsideDown: return .portraitUpsideDown
         case .landscapeRight: return .landscapeRight
         case .landscapeLeft: return .landscapeLeft
+        default: return .portrait
         }
     }
     

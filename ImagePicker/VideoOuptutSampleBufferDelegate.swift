@@ -35,7 +35,7 @@ final class VideoOutputSampleBufferDelegate : NSObject, AVCaptureVideoDataOutput
 
 extension CMSampleBuffer {
     
-    static let context = CIContext(options: [kCIContextUseSoftwareRenderer: false])
+    static let context = CIContext(options: convertToOptionalCIContextOptionDictionary([convertFromCIContextOption(CIContextOption.useSoftwareRenderer): false]))
     
     ///
     /// Converts Sample Buffer to UIImage with backing CGImage. This conversion
@@ -69,4 +69,15 @@ extension CMSampleBuffer {
         
         return nil
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalCIContextOptionDictionary(_ input: [String: Any]?) -> [CIContextOption: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (CIContextOption(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromCIContextOption(_ input: CIContextOption) -> String {
+	return input.rawValue
 }

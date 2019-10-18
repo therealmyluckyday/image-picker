@@ -73,8 +73,8 @@ final class VideoCaptureDelegate: NSObject, AVCaptureFileOutputRecordingDelegate
         }
         
         if let currentBackgroundRecordingID = backgroundRecordingID {
-            backgroundRecordingID = UIBackgroundTaskInvalid
-            if currentBackgroundRecordingID != UIBackgroundTaskInvalid {
+            backgroundRecordingID = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
+            if currentBackgroundRecordingID != UIBackgroundTaskIdentifier.invalid {
                 UIApplication.shared.endBackgroundTask(currentBackgroundRecordingID)
             }
         }
@@ -142,4 +142,9 @@ final class VideoCaptureDelegate: NSObject, AVCaptureFileOutputRecordingDelegate
     }
     
 
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIdentifier) -> Int {
+	return input.rawValue
 }

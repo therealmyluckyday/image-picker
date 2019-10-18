@@ -116,7 +116,7 @@ open class ImagePickerController : UIViewController {
     ///
     /// Programatically select asset.
     ///
-    public func selectAsset(at index: Int, animated: Bool, scrollPosition: UICollectionViewScrollPosition) {
+    public func selectAsset(at index: Int, animated: Bool, scrollPosition: UICollectionView.ScrollPosition) {
         let path = IndexPath(item: index, section: layoutConfiguration.sectionIndexForAssets)
         collectionView.selectItem(at: path, animated: animated, scrollPosition: scrollPosition)
     }
@@ -144,7 +144,7 @@ open class ImagePickerController : UIViewController {
     public var selectedAssets: [PHAsset] {
         get {
             let selectedIndexPaths = collectionView.indexPathsForSelectedItems ?? []
-            let selectedAssets = selectedIndexPaths.flatMap { indexPath in
+            let selectedAssets = selectedIndexPaths.compactMap { indexPath in
                 return asset(at: indexPath.row)
             }
             return selectedAssets
@@ -212,7 +212,7 @@ open class ImagePickerController : UIViewController {
     private var collectionViewCoordinator: CollectionViewUpdatesCoordinator!
     
     fileprivate var imagePickerView: ImagePickerView! {
-        return view as! ImagePickerView
+        return view as? ImagePickerView ?? ImagePickerView()
     }
     
     fileprivate var collectionViewDataSource = ImagePickerDataSource(assetsModel: ImagePickerAssetModel())
@@ -266,6 +266,9 @@ open class ImagePickerController : UIViewController {
                     self.reloadData(basedOnAuthorizationStatus: status)
                 }
             })
+            
+        default:
+            break
         }
     }
     
@@ -316,6 +319,8 @@ open class ImagePickerController : UIViewController {
         switch layoutConfiguration.scrollDirection {
         case .horizontal: collectionView.alwaysBounceHorizontal = true
         case .vertical: collectionView.alwaysBounceVertical = true
+        default:
+            break
         }
         
         if #available(iOS 11.0, *) {
@@ -420,7 +425,7 @@ extension ImagePickerController: PHPhotoLibraryChangeObserver {
         }
         
         //perform update animations
-        collectionViewCoordinator.performChanges(changes, inSection: layoutConfiguration.sectionIndexForAssets)
+        collectionViewCoordinator.performChanges(changes as! PHFetchResultChangeDetails<PHObject>, inSection: layoutConfiguration.sectionIndexForAssets)
     }
 }
 
