@@ -143,7 +143,6 @@
 		42EDD4171F7164FB00EAD2F5 /* PhotoCaptureDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureDelegate.swift; sourceTree = "<group>"; };
 		42EDD41B1F71727500EAD2F5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		42F7D8001F7A5B71009D378A /* Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appearance.swift; sourceTree = "<group>"; };
-		FA090F80255EC82B00AE8C41 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,7 +167,6 @@
 		420C23F31F5D82C6008935D4 = {
 			isa = PBXGroup;
 			children = (
-				FA090F80255EC82B00AE8C41 /* Package.swift */,
 				42EDD41B1F71727500EAD2F5 /* README.md */,
 				420C23FE1F5D82C6008935D4 /* ExampleApp */,
 				420C24171F5D82F9008935D4 /* ImagePicker */,
